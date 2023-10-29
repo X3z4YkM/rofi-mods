@@ -1,0 +1,31 @@
+#!/bin/bash
+# Function to display the Rofi menu with icons
+show_menu() {
+  # Get the current volume and mute status
+  volume=$(pulsemixer --get-volume | awk '{print $1}')
+  mute=$(pulsemixer --get-mute)  # Rofi options for volume control with icons using Unicode code points
+  options="Exit\n  Volume Up\n  Volume Down\n  Toggle Mute"  # Display Rofi menu and get the user's choice
+  selected_option=$(echo -e "$options" | rofi -dmenu -p "Volume Control:")
+}
+# Initial display of the Rofi menu with icons
+show_menu
+# Loop to continuously display the Rofi menu with icons until "Esc" key is pressed
+while true; do
+  case "$selected_option" in
+    "  Volume Up")
+      pulsemixer --change-volume +5 # Increase volume by 5%
+      ;;
+    "  Volume Down")
+      pulsemixer --change-volume -5 # Decrease volume by 5%
+      ;;
+    "  Toggle Mute")
+      pulsemixer --toggle-mute # Toggle mute status
+      ;;
+    *)
+      # If no valid option selected, exit the loop
+      break
+      ;;
+  esac
+  # Show the Rofi menu with icons again to allow further volume adjustments
+  show_menu
+done
